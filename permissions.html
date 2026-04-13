@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Granting Tron Energy Rental Permissions - Пошаговое руководство</title>
+  <style>
+    :root {
+      --bg: #f7f7f7;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #4b5563;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    main {
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    article {
+      width: 100%;
+      max-width: 900px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    h1,
+    h2 {
+      line-height: 1.25;
+      margin-top: 0;
+      color: #111827;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 3vw, 2.5rem);
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0 0 1rem;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+    }
+
+    ul,
+    ol {
+      padding-left: 1.4rem;
+    }
+
+    li+li {
+      margin-top: 0.45rem;
+    }
+
+    ol>li {
+      margin-bottom: 1rem;
+      padding-left: 0.2rem;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    strong {
+      color: #111827;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.95em;
+      background: var(--accent-soft);
+      color: #1d4ed8;
+      border: 1px solid #dbeafe;
+      border-radius: 8px;
+      padding: 0.14rem 0.42rem;
+      white-space: nowrap;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 640px) {
+      main {
+        padding: 20px 12px;
+      }
+
+      article {
+        padding: 22px 18px;
+        border-radius: 14px;
+      }
+
+      h1 {
+        margin-bottom: 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <article>
+      <h1>Granting Tron Energy Rental Permissions - Пошаговое руководство</h1>
+
+      <p><strong>Цель:</strong> Предоставить доверенному адресу ограниченный контроль над действиями стейкинг и
+        делегирование без возможности переводов TRX или вызовов смарт контрактов.</p>
+
+      <h2>Понимание разрешений аккаунта Tron</h2>
+
+      <p><strong>Active Permission:</strong> Это тип разрешения, который позволяет доверенному адресу выполнять
+        определённые действия от вашего имени, такие как стейкинг, делегирование ресурсов или голосование. Оно
+        предназначено для
+        предоставления ограниченного контроля над вашим аккаунтом без предоставления доступа к чувствительным операциям,
+        таким как перевод TRX или взаимодействие со смарт контрактами. Active permissions идеально подходят для сценариев,
+        где вы хотите делегировать определённые обязанности, сохраняя при этом общий контроль над своим аккаунтом.</p>
+
+      <p><strong>Owner Permission:</strong> В отличие от Active Permission, настройка Owner Permission предоставляет полный доступ к
+        вашему аккаунту, включая возможность переводить TRX, вызывать смарт контракты или выполнять другие
+        неограниченные действия. Это разрешение является самым высоким уровнем контроля и должно предоставляться только
+        сторонам, которым вы полностью доверяете, так как оно подвергает ваш аккаунт риску потенциального
+        злоупотребления или несанкционированных транзакций. Обычно оно не рекомендуется, если только вы полностью не
+        доверяете уполномоченной стороне и не понимаете последствия предоставления такого доступа.</p>
+
+      <p><strong>Weight и Threshold</strong> используются для управления multi-signature authorization. Каждому ключу
+        (или адресу кошелька), добавленному в список разрешений, назначается weight, который представляет его
+        голосование
+        power или authority. Threshold – это минимальный суммарный weight, необходимый для авторизации операции.
+        Например, если threshold установлен на 2 и у вас есть два ключа с weight 1 и 1, оба ключа должны одобрить
+        операцию, чтобы достичь threshold. Если один ключ имеет weight, равный threshold или превышающий его, он может
+        действовать самостоятельно. Эта система обеспечивает гибкость и безопасность, позволяя нескольким ключам
+        совместно контролировать доступ или требуя нескольких одобрений для чувствительных действий.</p>
+
+      <p>Предоставление разрешений другому адресу позволяет ему выполнять определённые действия от вашего имени, такие
+        как управление арендой энергии. Эта настройка особенно полезна для того, чтобы сервис selltron.energy мог
+        автоматически управлять арендой вашей энергии. Ниже приведён подробный разбор предоставляемых active
+        permissions:</p>
+
+      <ul>
+        <li><strong>TRX Stake (2.0):</strong> Это позволяет уполномоченному адресу замораживать ваш TRX для Energy или
+          Bandwidth, что необходимо для выполнения транзакций или взаимодействия со смарт контрактами.</li>
+        <li><strong>Delegate Resources:</strong> Уполномоченный адрес может делегировать ваш Energy или Bandwidth
+          другому
+          адресу, обеспечивая эффективное совместное использование ресурсов.</li>
+        <li><strong>Reclaim Resources:</strong> Это позволяет уполномоченному адресу возвращать делегированные ресурсы
+          обратно на ваш аккаунт.</li>
+        <li><strong>Vote:</strong> Уполномоченный адрес может использовать ваш замороженный TRX для голосования
+          за Super Representatives (SRs), внося вклад в управление сетью Tron.</li>
+        <li><strong>Claim Voter/SR Rewards:</strong> Если применимо, уполномоченный адрес может получать стейкинговые
+          награды от вашего имени, обеспечивая получение вами наград от вашего участия.</li>
+      </ul>
+
+      <p>Тщательно выбирая эти разрешения, вы можете делегировать определённые действия, сохраняя контроль над
+        чувствительными операциями, такими как переводы TRX или взаимодействие со смарт контрактами.</p>
+
+      <h2>Пошаговая инструкция:</h2>
+
+      <ol>
+        <li>
+          <p><strong>Перейдите на <a href="https://tronscan.org">tronscan.org</a></strong></p>
+          <p>Используйте desktop browser с установленным <strong>TronLink browser extension</strong>.</p>
+        </li>
+
+        <li>
+          <p><strong>Войдите через TronLink</strong></p>
+          <p>Нажмите <code>Connect Wallet</code> в правом верхнем углу, выберите <code>TronLink</code> и подтвердите
+            запрос.
+          </p>
+        </li>
+
+        <li>
+          <p><strong>Откройте страницу permissions своего аккаунта</strong></p>
+          <p>Перейдите на <a
+              href="https://tronscan.org/#/wallet/permissions">https://tronscan.org/#/wallet/permissions</a></p>
+        </li>
+
+        <li>
+          <p><strong>Добавьте новый Active Permission</strong></p>
+          <p>Нажмите кнопку <code>Edit Permission</code>, а затем кнопку <code>Add Active Permission</code>.
+          </p>
+        </li>
+
+        <li>
+          <p><strong>Добавьте новый уполномоченный адрес</strong></p>
+          <ul>
+            <li>В поле Permission Name введите имя <code>selltron.energy</code></li>
+            <li>Установите <strong>Threshold</strong> на <code>1</code></li>
+            <li>Вставьте <strong>адрес кошелька</strong>, которому хотите предоставить доступ</li>
+            <li>Установите <strong>Weight</strong> на <code>1</code></li>
+          </ul>
+        </li>
+
+        <li>
+          <p><strong>Выберите только следующие операции:</strong></p>
+          <ul>
+            <li><code>TRX Stake (2.0)</code> (заморозка TRX для Energy или Bandwidth)</li>
+            <li><code>Delegate Resources</code> (делегирование energy или bandwidth)</li>
+            <li><code>Reclaim Resources</code> (возврат делегирование)</li>
+            <li><code>Vote</code> (голосование за Super Representatives с использованием замороженного TRX)</li>
+            <li><code>Claim Voter/SR Rewards</code> (получение стейкинг rewards от вашего имени)</li>
+          </ul>
+        </li>
+
+        <li>
+          <p><strong>Проверьте и отправьте</strong></p>
+          <p>Нажмите <code>Confirm</code> и подтвердите обновление разрешений через TronLink.</p>
+        </li>
+
+        <li>
+          <p><strong>Проверьте</strong></p>
+          <p>После подтверждения обновите страницу Permissions. Новый адрес появится только с указанными разрешениями.
+          </p>
+        </li>
+      </ol>
+
+      <hr>
+
+      <p>Эта настройка идеально подходит для того, чтобы доверенная третья сторона могла управлять стейкингом,
+        делегированием ресурсов и голосованием за SR без предоставления полного доступа к кошельку.</p>
+    </article>
+  </main>
+</body>
+
+</html>
